@@ -33,6 +33,7 @@ export class HomeComponent implements OnInit{
             .subscribe(notes => this.notes = notes);
         
         this.form = this.formBuilder.group({
+            id: [''],
             title: ['', Validators.required],
             description: ['', Validators.required],
             isDone: [false],
@@ -49,15 +50,23 @@ export class HomeComponent implements OnInit{
 
         // reset alerts on submit
         this.alertService.clear();
-
+        
         // stop here if form is invalid
         if (this.form.invalid) {
             return;
         }
-        this.createNote()
+        
+        if (this.isAddMode){
+            this.createNote()
+        } else {
+            this.updateNote()
+        }
     }
 
     private createNote() {
+        
+        this.f.id.setValue(null);
+        console.log(this.form.value);
         this.noteService.register(this.form.value)
             .pipe(first())
             .subscribe(
@@ -72,9 +81,55 @@ export class HomeComponent implements OnInit{
                 });
     }
 
+    private updateNote() {
+        this.isAddMode = true
+        this.noteService.update(this.form.value.id, this.form.value)
+            .pipe(first())
+            .subscribe(
+                data => {
+                    this.alertService.success('Note updated successfully', { keepAfterRouteChange: true });
+                    this.closebutton.nativeElement.click();
+                    this.ngOnInit()
+                },
+                error => {
+                    this.alertService.error(error);
+                    this.loading = false;
+                });
+    }
+
+    editClick(id: string) {
+        this.isAddMode = false
+        this.noteService.getById(id)
+            .pipe(first())
+            .subscribe(
+                x => {
+                    this.f.id.setValue(x.id);
+                    this.f.title.setValue(x.title);
+                    this.f.description.setValue(x.description);
+                },
+                error => {
+                    this.alertService.error(error);
+                    this.loading = false;
+                });
+    }
+
     deleteUser(id: string) {
         this.accountService.delete(id)
             .pipe(first())
-            .subscribe(() => {});
+            .subscribe(() => { this.ngOnInit()});
+    }
+
+    deleteClick(id: string) {
+        this.noteService.delete(id)
+            .pipe(first())
+            .subscribe(
+                data => {
+                    this.alertService.success('Note Deleted successfully', { keepAfterRouteChange: true });
+                    this.ngOnInit()
+                },
+                error => {
+                    this.alertService.error(error);
+                    this.loading = false;
+                });
     }
 }
