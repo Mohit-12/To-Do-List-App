@@ -1,5 +1,10 @@
 # See http://help.github.com/ignore-files/ for more about ignoring files.
 
+# Logs
+logs
+*.log
+npm-debug.log*
+
 # compiled output
 /dist
 /tmp
@@ -13,6 +18,7 @@
 # profiling files
 chrome-profiler-events*.json
 speed-measure-plugin*.json
+
 
 # IDEs and editors
 /.idea

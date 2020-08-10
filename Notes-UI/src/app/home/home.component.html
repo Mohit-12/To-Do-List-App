@@ -12,16 +12,28 @@
     </div>
     <div class="accordion" id="notelist">
       <div class="card" *ngFor="let note of notes;let i = index">
-        <div class="card-header" id="{{note.id}}">
-          <h2 class="mb-0">
-            <button class="btn btn-link btn-block text-left" type="button" data-toggle="collapse"
-              data-target="{{'#'+ i}}" aria-expanded="true" aria-controls="{{i}}">
-              {{note.title}}
-            </button>
-          </h2>
+        <div class="card-header row" id="{{note.id}}">
+          <div class="col-md-10">
+            <h2 class="mb-0">
+              <button class="btn btn-link btn-block text-left" type="button" data-toggle="collapse"
+                data-target="{{i + '-body'}}" aria-expanded="true" aria-controls="{{i + '-body'}}">
+                {{note.title}}
+              </button>
+            </h2>
+          </div>
+          <div class="col-md-2">
+            <ul>
+              <li class="list-inline-item">
+                <button class="btn btn-success btn-sm rounded-0" type="button" data-toggle="modal" data-target="#noteModal" data-placement="top" (click)="editClick(note.id)">Edit</button>
+              </li>
+              <li class="list-inline-item">
+                <button class="btn btn-danger btn-sm rounded-0" type="button"  data-placement="top" title="Delete" (click)="deleteClick(note.id)">Delete</button>
+              </li>
+            </ul>
+          </div>
         </div>
 
-        <div id="{{i}}" class="collapse show" aria-labelledby="headingOne" data-parent="#notelist">
+        <div id="{{i + '-body'}}" class="collapse show" aria-labelledby="headingOne" data-parent="#notelist">
           <div class="card-body">
             {{note.description}}
           </div>
@@ -63,6 +75,9 @@
               </div>
               <div class="form-group">
                 <input type="hidden" formControlName="createdBy" class="form-control" />
+              </div>
+              <div class="form-group">
+                <input type="hidden" formControlName="id" class="form-control" />
               </div>
               <div class="form-group">
                 <div class="modal-footer">
